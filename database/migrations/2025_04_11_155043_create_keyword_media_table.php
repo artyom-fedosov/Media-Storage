@@ -12,9 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('keyword_media', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('keyword_id')->constrained()->onDelete('cascade');
-            $table->foreignId('media_id')->constrained()->onDelete('cascade');
+            $table->string('keyword_name');
+            $table->string('media_uuid');
+            $table->foreign('keyword_name')->references('name')->on('keywords')->onDelete('cascade');
+            $table->foreign('media_uuid')->references('uuid')->on('media')->onDelete('cascade');
+            $table->primary(['keyword_name', 'media_uuid']);
             $table->timestamps();
         });
     }
