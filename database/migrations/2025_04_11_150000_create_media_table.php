@@ -11,18 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('users', function (Blueprint $table) {
-            $table->string('login')->unique()->primary();
+        Schema::create('media', function (Blueprint $table) {
+            $table->uuid()->primary();
+            $table->string('owner');
+            $table->foreign('owner')->references('login')->on('users')->onDelete('cascade');
+            $table->string('type');
             $table->string('name');
-            $table->string('email')->unique();
-            $table->string('password');
-            $table->string('theme_style');
-            $table->integer('density');
-            $table->string('language');
             $table->timestamps();
         });
-
-
     }
 
     /**
@@ -30,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('media');
     }
 };
