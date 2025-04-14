@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('theme_style');
             $table->integer('density');
             $table->string('language');
+            $table->timestamps();
         });
 
 
