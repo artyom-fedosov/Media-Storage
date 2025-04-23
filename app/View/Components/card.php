@@ -22,9 +22,7 @@ class Card extends Component
         $this->image = $image;
     }
 
-    /**
-     * Get the view / contents that represent the component.
-     */
+
     public function render(): View|Closure|string
     {
         return view('components.card');
