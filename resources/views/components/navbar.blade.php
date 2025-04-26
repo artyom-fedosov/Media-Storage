@@ -1,6 +1,6 @@
 <nav class="navbar navbar-expand-md bg-secondary ">
     <div class="container-fluid justify-content-evenly">
-        <p class="navbar-brand h1 fs-1 text-dark  mb-0">Media Storage</p>
+        <p class="navbar-brand h1 fs-1 text-dark  mb-0">{{__('Media Storage')}}</p>
         <p class="navbar-text  fs-1 text-darl  mb-0">{{$username}}</p>
         <div class="dropdown" id="languageMenu">
             <button class="btn btn-secondary dropdown-toggle text-dark fs-1" data-bs-toggle="dropdown" type="button" id="languageDropdownButton">{{$lang}}</button>

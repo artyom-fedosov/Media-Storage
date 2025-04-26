@@ -1,3 +1,4 @@
+
 document.addEventListener('DOMContentLoaded', function(){
     const btn = document.getElementById("languageDropdownButton")
     document.querySelectorAll('#languageMenu .dropdown-item').forEach(function (item){
