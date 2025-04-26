@@ -6,7 +6,7 @@
         </button>
     </div>
     <div class="card-body">
-        <img class ="img-fluid"src="{{$image}}" alt="preview"/>
+        <img class ="img-fluid" src="{{$image}}" alt="preview"/>
         <p class="card-text text-dark">{{$descr}}</p>
         <div id="keywords" class="d-flex flex-wrap gap-2">
             @foreach($keywords as $keyword)
