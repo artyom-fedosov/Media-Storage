@@ -1,7 +1,10 @@
 <?php
 
+use App\Http\Controllers\MediaController;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
+
+
 
 Route::get('/', function () {
     App::setLocale('en');
@@ -17,3 +20,5 @@ Route::get('/ru', function () {
     App::setLocale('ru');
     return view('main');
 });
+
+Route::resource('media', MediaController::class);
