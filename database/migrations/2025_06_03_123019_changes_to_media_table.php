@@ -11,10 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('keywords', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->timestamps();
+        Schema::table('media', function (Blueprint $table) {
+            $table->string('image')->default('assets/placeholder.png');
+            $table->text('description')->nullable();
         });
     }
 
@@ -23,6 +22,9 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('keywords');
+        Schema::table('media', function (Blueprint $table) {
+            $table->dropColumn('image');
+            $table->dropColumn('description');
+        });
     }
 };

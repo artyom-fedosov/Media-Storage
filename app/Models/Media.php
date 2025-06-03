@@ -6,8 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 use \Illuminate\Database\Eloquent\Relations\BelongsToMany;
 class Media extends Model
 {
-    protected $fillable = ['owner', 'type', 'name'];
-
+    protected $fillable = ['owner', 'type', 'name', 'image', 'description'];
+    public $incrementing = false;
+    protected $keyType = 'string';
+    protected $primaryKey = 'uuid';
     public function owners(): BelongsToMany
     {
         return $this->belongsToMany(User::class)->withPivot('read', 'write');
