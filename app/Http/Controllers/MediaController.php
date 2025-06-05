@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Keyword;
 use App\Models\Media;
 use Illuminate\Http\Request;
 
@@ -29,8 +30,13 @@ class MediaController extends Controller
      */
     public function store(Request $request)
     {
-        request()->validate([]); //
-        Media::create([]);
+//        request()->validate([
+//            'name' => ['required', 'string', 'max:255'],
+//            'media' => ['required', 'file', 'max:100000'],
+//            'description' => ['nullable', 'string'],
+//            'keywords' => ['nullable', 'string'],
+//        ]);
+//        Media::create([]);
         return redirect()->route('media.index')->with('success', 'Media created successfully.');
     }
 
@@ -40,7 +46,7 @@ class MediaController extends Controller
     public function show(string $id)
     {
         $media = Media::find($id);
-        return view('media.show', compact('media')); // create media.show
+        return view('media.show', compact('media'));
     }
 
     /**
@@ -48,9 +54,8 @@ class MediaController extends Controller
      */
     public function edit(string $id)
     {
-        //Mb logic to allow search for specific piece
         $media = Media::find($id);
-        return view('media.edit', compact('media')); // create media.edit
+        return view('media.edit', compact('media'));
     }
 
     /**
@@ -58,16 +63,37 @@ class MediaController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //Mb logic to allow search for specific piece
+        request()->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'description' => ['nullable', 'string'],
+            'keywords' => ['nullable', 'string'],
+        ]);
         $media = Media::find($id);
-        $media->update([]);
-        return view('media.show', compact('media'))->with('success', 'Media updated successfully.');
+        $media->update([
+            'name' => $request->name,
+            'description' => $request->description,
+        ]);
+
+        $media->keywords()->detach();
+
+        if ($request->filled('keywords')) {
+            $keywords = explode(',', $request->keywords);
+            foreach ($keywords as $word) {
+                $word = trim($word);
+                if ($word) {
+                    $keyword = Keyword::firstOrCreate(['name' => $word]);
+                    $media->keywords()->attach($keyword->id);
+                }
+            }
+        }
+        return redirect()->route('media.show', $media->uuid)
+            ->with('success', 'Media updated successfully.');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Request $request, Media $media)
+    public function destroy(Request $request, Media $media) //?????
     {
         $media->delete();
         return redirect()->route('media.index')->with('success', 'Media deleted successfully.');

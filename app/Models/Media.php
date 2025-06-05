@@ -12,7 +12,12 @@ class Media extends Model
     protected $primaryKey = 'uuid';
     public function owners(): BelongsToMany
     {
-        return $this->belongsToMany(User::class)->withPivot('read', 'write');
+        return $this->belongsToMany(User::class, 'user_media')->withPivot('read', 'write');
+    }
+
+    public function getKeywordsStringAttribute():string
+    {
+        return $this->keywords->pluck('name')->join(', ');
     }
 
     public function keywords(): BelongsToMany

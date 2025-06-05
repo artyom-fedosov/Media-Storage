@@ -55,15 +55,17 @@ class DatabaseSeeder extends Seeder
 
         $m1 = Media::create([
             'uuid' => Str::uuid(),
-            'type' => 'image/jpeg',
+            'type' => 'image',
             'owner' => 'Artyom',
+            'route' => 'uploads/PHP-logo-lossless.webp',
             'name' => 'PHP in 2025',
             'description' => 'This is PHP!',
         ]);
         $m2 = Media::create([
             'uuid' => Str::uuid(),
-            'type' => 'image/jpeg',
+            'type' => 'text',
             'owner' => 'Yarik',
+            'route' => 'uploads/text.txt',
             'name' => 'AI gone insane!',
             'description' => 'Oh no!!!'
         ]);

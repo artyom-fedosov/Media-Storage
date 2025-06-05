@@ -22,3 +22,4 @@ Route::get('/ru', function () {
 });
 
 Route::resource('media', MediaController::class);
+Route::delete('/media/{media:uuid}', [MediaController::class, 'destroy'])->name('media.destroy');

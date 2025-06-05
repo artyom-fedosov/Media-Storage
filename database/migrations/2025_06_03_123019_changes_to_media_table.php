@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('media', function (Blueprint $table) {
-            $table->string('image')->default('assets/placeholder.png');
+            $table->string('route'); // !! REMOVE DEFAULT
             $table->text('description')->nullable();
         });
     }
