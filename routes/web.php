@@ -22,9 +22,6 @@ Route::get('/ru', function () {
     return view('main');
 });
 
-Route::resource('media', MediaController::class);
-Route::delete('/media/{media:uuid}', [MediaController::class, 'destroy'])->name('media.destroy');
-
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('showLogin');
@@ -37,5 +34,7 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
 
     Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
-
+    Route::get('/media/preview/{id}', [MediaController::class, 'preview'])->name('media.preview');
+    Route::get('/media/download/{id}', [MediaController::class, 'download'])->name('media.download');
+    Route::resource('media', MediaController::class);
 });

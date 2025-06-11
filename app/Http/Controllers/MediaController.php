@@ -6,6 +6,7 @@ use App\Models\Keyword;
 use App\Models\Media;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class MediaController extends Controller
 {
@@ -14,7 +15,7 @@ class MediaController extends Controller
      */
     public function index()
     {
-        $media = Media::all(); // Implement logic to show only available media
+        $media = Media::where('owner', auth()->user()->login)->get(); // Implement logic to show only available media
         return view('media.index', compact('media')); // create media.index
     }
 
@@ -41,7 +42,7 @@ class MediaController extends Controller
         $mimeType = $file->getMimeType();
         $parts = explode('/', $mimeType);
         $type = $parts[0];
-        $path = $file->store('public/uploads');
+        $path = $file->store('uploads', 'private');
         $media = Media::create([
             'name' => $request->name,
             'owner' => Auth::id(),
@@ -119,9 +120,50 @@ class MediaController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Request $request, Media $media) //?????
+    public function destroy(Request $request, Media $medium) //?????
     {
-        $media->delete();
+
+
+        if($medium->owner !== Auth::id()){
+            abort(403, "Not authorized to view media");
+        }
+        $path = $medium->route;
+        if(!Storage::disk('private')->exists($path)){
+            abort(404, "Media not found");
+        }
+        Storage::disk('private')->delete($path);
+        $medium->delete();
         return redirect()->route('media.index')->with('success', 'Media deleted successfully.');
     }
+
+    public function preview(string $id){
+        $media = Media::where('uuid', $id)->firstOrFail();
+
+        if($media->owner !== Auth::id()){
+            abort(403, "Not authorized to view media");
+        }
+        $path = $media->route;
+        if(!Storage::disk('private')->exists($path)){
+            abort(404, "Media not found");
+        }
+
+        return response()->file(Storage::disk('private')->path($path));
+
+    }
+
+    public function download(string $id){
+        $media = Media::where('uuid', $id)->firstOrFail();
+
+        if($media->owner !== Auth::id()){
+            abort(403, "Not authorized to view media");
+        }
+        $path = $media->route;
+        if(!Storage::disk('private')->exists($path)){
+            abort(404, "Media not found");
+        }
+
+        return response()->download(Storage::disk('private')->path($path));
+
+    }
+
 }

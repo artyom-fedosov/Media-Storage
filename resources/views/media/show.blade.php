@@ -5,23 +5,30 @@
         <div class="card-body text-center">
             <h2 class="card-title">{{ $media->name }}</h2>
             @if((hash_equals($media->type, 'image')))
-                <img class ="img-fluid" style="max-width: 600px; max-height: 400px; object-fit: contain;" src="{{asset("$media->route")}}" alt="preview"/>
+                <img class ="img-fluid" src="{{route('media.preview', $media->uuid)}}" alt="preview"/>
+            @elseif((hash_equals($media->type, 'text')) or (hash_equals($media->type, 'application')))
+                <img class ="img-fluid" src="{{asset("assets/document.jpg")}}" alt="preview"/>
+            @elseif((hash_equals($media->type, 'audio')))
+                <img class ="img-fluid" src="{{asset("assets/audio.png")}}" alt="preview"/>
+            @elseif((hash_equals($media->type, 'video')))
+                <img class ="img-fluid" src="{{asset("assets/video.jpg")}}" alt="preview"/>
             @else
-                <img class ="img-fluid" style="max-width: 600px; max-height: 400px; object-fit: contain;" src="{{asset("assets/placeholder.png")}}" alt="preview"/>
+                <img class ="img-fluid" src="{{asset("assets/placeholder.png")}}" alt="preview"/>
             @endif
-            <p class="card-text">{{ $media->description }}</p>
             <div id="keywords" class="d-flex flex-wrap gap-2 justify-content-center">
-                @foreach($media->keywords as $keyword)
-                    <span class="badge bg-primary">{{$keyword->name}}</span>
-                @endforeach
+              @foreach($media->keywords as $keyword)
+                  <span class="badge bg-primary">{{$keyword->name}}</span>
+              @endforeach
             </div>
+            <p class="card-text"><strong>Description: </strong>{{ $media->description }}</p>
             <ul class="list-unstyled mb-3">
                 <li><strong>Type:</strong> {{ $media->type}}</li>
+                <li><strong>Extension:</strong> {{ pathinfo($media->route, PATHINFO_EXTENSION)}}</li>
                 <li><strong>Owner:</strong> {{ $media->owner}}</li>
                 <li><strong>Date:</strong> {{ $media->created_at?->format('Y-m-d')}}</li>
             </ul>
                 <div class="d-flex gap-2 align-middle justify-content-center">
-                        <a class="btn btn-success">Download</a>
+                        <a class="btn btn-success" href="{{route('media.download',$media->uuid)}}">Download</a>
                         <a href="{{route('media.edit',$media->uuid)}}" class="btn btn-primary">Edit</a>
                         <form action="{{ route('media.destroy', $media) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this job listing?');">
                             @csrf

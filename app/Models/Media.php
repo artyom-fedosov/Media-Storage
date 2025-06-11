@@ -8,7 +8,7 @@ use Illuminate\Support\Str;
 
 class Media extends Model
 {
-    protected $fillable = ['owner', 'type', 'name', 'image', 'description'];
+    protected $fillable = ['owner', 'type', 'name', 'image','route', 'description'];
     public $incrementing = false;
     protected $keyType = 'string';
     protected $primaryKey = 'uuid';

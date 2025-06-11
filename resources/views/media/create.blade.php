@@ -12,7 +12,7 @@
             </div>
         @endif
         <h1 class="mb-4">Upload new media</h1>
-        <form method="POST" action="{{ route('media.store') }}">
+        <form method="POST" action="{{ route('media.store') }}"  enctype="multipart/form-data">
             @csrf
             <div class="mb-3">
                 <label class="form-label">Name</label>
@@ -20,7 +20,7 @@
             </div>
             <div class="mb-3">
                 <label class="form-label">Upload media</label>
-                <input type="file" name="media" class="form-control" >
+                <input type="file" name="media" class="form-control">
             </div>
             <div class="mb-3">
                 <label class="form-label">Description</label>
