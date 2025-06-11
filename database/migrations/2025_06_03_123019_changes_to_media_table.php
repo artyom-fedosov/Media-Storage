@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('media', function (Blueprint $table) {
-            $table->string('route'); // !! REMOVE DEFAULT
+            $table->string('route');
             $table->text('description')->nullable();
         });
     }
@@ -23,7 +23,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('media', function (Blueprint $table) {
-            $table->dropColumn('image');
+            $table->dropColumn('route');
             $table->dropColumn('description');
         });
     }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Keyword;
 use App\Models\Media;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class MediaController extends Controller
 {
@@ -30,13 +31,38 @@ class MediaController extends Controller
      */
     public function store(Request $request)
     {
-//        request()->validate([
-//            'name' => ['required', 'string', 'max:255'],
-//            'media' => ['required', 'file', 'max:100000'],
-//            'description' => ['nullable', 'string'],
-//            'keywords' => ['nullable', 'string'],
-//        ]);
-//        Media::create([]);
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'media' => ['required', 'file', 'max:100000'],
+            'description' => ['nullable', 'string'],
+            'keywords' => ['nullable', 'string'],
+        ]);
+        $file = $request->file('media');
+        $mimeType = $file->getMimeType();
+        $parts = explode('/', $mimeType);
+        $type = $parts[0];
+        $path = $file->store('public/uploads');
+        $media = Media::create([
+            'name' => $request->name,
+            'owner' => Auth::id(),
+            'type' => $type,
+            'route' => $path,
+            'description' => $request->description
+        ]);
+
+
+        if ($request->filled('keywords')) {
+            $keywords = explode(',', $request->keywords);
+            foreach ($keywords as $word) {
+                $word = trim($word);
+                if ($word) {
+                    $keyword = Keyword::firstOrCreate(['name' => $word]);
+                    $media->keywords()->attach($keyword->id);
+                }
+            }
+        }
+
+
         return redirect()->route('media.index')->with('success', 'Media created successfully.');
     }
 

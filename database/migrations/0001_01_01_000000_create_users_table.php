@@ -16,9 +16,9 @@ return new class extends Migration
             $table->string('name');
             $table->string('email')->unique();
             $table->string('password');
-            $table->string('theme_style');
-            $table->integer('density');
-            $table->string('language');
+            $table->string('theme_style')->default('light');
+            $table->integer('density')->default(100);
+            $table->string('language')->default('en');
             $table->timestamps();
         });
 

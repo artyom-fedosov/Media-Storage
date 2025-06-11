@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use \Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Str;
+
 class Media extends Model
 {
     protected $fillable = ['owner', 'type', 'name', 'image', 'description'];
@@ -25,4 +27,13 @@ class Media extends Model
         return $this->belongsToMany(Keyword::class);
     }
 
+    protected static function boot()
+    {
+        parent::boot();
+        static::creating(function ($model) {
+            if(!$model->uuid) {
+                $model->uuid = (string)Str::uuid();
+            }
+        });
+    }
 }
