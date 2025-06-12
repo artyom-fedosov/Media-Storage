@@ -64,7 +64,7 @@ class MediaController extends Controller
         }
 
 
-        return redirect()->route('media.index')->with('success', 'Media created successfully.');
+        return redirect()->route('media.index')->with('success', __('Media created successfully.'));
     }
 
     /**
@@ -114,7 +114,7 @@ class MediaController extends Controller
             }
         }
         return redirect()->route('media.show', $media->uuid)
-            ->with('success', 'Media updated successfully.');
+            ->with('success', __('Media updated successfully.'));
     }
 
     /**
@@ -122,29 +122,27 @@ class MediaController extends Controller
      */
     public function destroy(Request $request, Media $medium) //?????
     {
-
-
         if($medium->owner !== Auth::id()){
-            abort(403, "Not authorized to view media");
+            abort(403, __('Not authorized to view media'));
         }
         $path = $medium->route;
         if(!Storage::disk('private')->exists($path)){
-            abort(404, "Media not found");
+            abort(404, __("Media not found"));
         }
         Storage::disk('private')->delete($path);
         $medium->delete();
-        return redirect()->route('media.index')->with('success', 'Media deleted successfully.');
+        return redirect()->route('media.index')->with('success', __('Media deleted successfully.'));
     }
 
     public function preview(string $id){
         $media = Media::where('uuid', $id)->firstOrFail();
 
         if($media->owner !== Auth::id()){
-            abort(403, "Not authorized to view media");
+            abort(403, __("Not authorized to view media"));
         }
         $path = $media->route;
         if(!Storage::disk('private')->exists($path)){
-            abort(404, "Media not found");
+            abort(404, __("Media not found"));
         }
 
         return response()->file(Storage::disk('private')->path($path));
@@ -155,11 +153,11 @@ class MediaController extends Controller
         $media = Media::where('uuid', $id)->firstOrFail();
 
         if($media->owner !== Auth::id()){
-            abort(403, "Not authorized to view media");
+            abort(403, __("Not authorized to view media"));
         }
         $path = $media->route;
         if(!Storage::disk('private')->exists($path)){
-            abort(404, "Media not found");
+            abort(404, __("Media not found"));
         }
 
         return response()->download(Storage::disk('private')->path($path));

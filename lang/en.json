@@ -32,5 +32,11 @@
     "Type": "Type",
     "Extension": "Extension",
     "Owner": "Owner",
-    "Date": "Date"
+    "Date": "Date",
+    "The provided credentials do not match our records.": "The provided credentials do not match our records.",
+    "Media created successfully.": "Media created successfully.",
+    "Media updated successfully.": "Media updated successfully.",
+    "Not authorized to view media": "Not authorized to view media",
+    "Media not found": "Media not found",
+    "Media deleted successfully.": "Media deleted successfully."
 }

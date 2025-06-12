@@ -32,5 +32,11 @@
     "Type": "Тип",
     "Extension": "Расширение",
     "Owner": "Владелец",
-    "Date": "Дата"
+    "Date": "Дата",
+    "The provided credentials do not match our records.": "Предоставленные учетные данные не совпадают с нашими записями.",
+    "Media created successfully.": "Мультимедиа успешно создано.",
+    "Media updated successfully.": "Мультимедиа успешно обновлено.",
+    "Not authorized to view media": "Не авторизован для просмотра мультимедиа",
+    "Media not found": "Мультимедиа не найдено",
+    "Media deleted successfully.": "Мультимедиа успешно удалено."
 }

@@ -37,7 +37,7 @@ class AuthController extends Controller
             $request->session()->regenerate();
             return redirect()->intended('/media');
         }
-        return back()->with('error', 'The provided credentials do not match our records.');
+        return back()->with('error', __('The provided credentials do not match our records.'));
     }
     public function logout(Request $request){
         auth()->logout();

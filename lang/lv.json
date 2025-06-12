@@ -32,5 +32,11 @@
     "Type": "Tips",
     "Extension": "Paplašinājums",
     "Owner": "Īpašnieks",
-    "Date": "Datums"
+    "Date": "Datums",
+    "The provided credentials do not match our records.": "Norādītie uzskaites dati neatbilst mūsu ierakstiem.",
+    "Media created successfully.": "Multivide ir veiksmīgi izveidota.",
+    "Media updated successfully.": "Multivide ir veiksmīgi atjaunināta.",
+    "Not authorized to view media": "Nav autorizēts, lai skatītu multivides",
+    "Media not found": "Multivide nav atrasta",
+    "Media deleted successfully.": "Multivide ir veiksmigi nodzēsta."
 }
