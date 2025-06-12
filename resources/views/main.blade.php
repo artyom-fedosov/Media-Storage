@@ -1,7 +1,8 @@
 @extends('layouts.app')
 @section('title', 'Media Storage')
 @section('content')
-        <!-- The container for media -->
-        <div class="container d-grid" style="display: grid; grid-template-columns: 1fr 1fr 1fr;">
+    <div class="container py-4">
+        <div class="row row-cols-1 row-cols-md-3 g-3">
         </div>
+    </div>
 @endsection

@@ -2,23 +2,23 @@
 @extends('layouts.app')
 @section('title', $media->name)
 @section('content')
-    <div class="container py-4">
+    <div class="container py-{{$density === 'compact' ? '3' : '4'}}">
         @if(session('success'))
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <div class="alert alert-success alert-dismissible fade show {{$density === 'compact' ? 'small' : ''}}" role="alert">
                 {{session('success')}}
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         @endif
         @if(session('error'))
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <div class="alert alert-danger alert-dismissible fade show {{$density === 'compact' ? 'small' : ''}}" role="alert">
                 {{session('error')}}
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         @endif
 
         <div class="card shadow-sm {{$theme === 'dark' ? 'bg-dark text-light' : ''}}">
-            <div class="card-body text-center">
-                <h2 class="card-title mb-4">{{$media->name}}</h2>
+            <div class="card-body text-center {{$density === 'compact' ? 'small' : ''}}">
+                <h2 class="card-title mb-{{$density === 'compact' ? '3' : '4'}}">{{$media->name}}</h2>
 
                 @php
                     $type = $media->type;
@@ -26,25 +26,27 @@
                 @endphp
 
                 @if(hash_equals($type, 'image'))
-                    <img class="img-fluid rounded mb-3" src="{{route('media.preview', $media->uuid)}}" alt="preview">
+                    <img class="img-fluid rounded mb-{{$density === 'compact' ? '2' : '3'}}"
+                         src="{{route('media.preview', $media->uuid)}}" alt="preview">
                 @elseif(hash_equals($type, 'text') || hash_equals($type, 'application'))
                     <iframe src="{{route('media.preview', $media->uuid)}}" width="100%"
-                            height="600px"></iframe>
+                            height="{{$density === 'compact' ? '400px' : '600px'}}"></iframe>
                 @elseif(hash_equals($type, 'audio'))
-                    <audio controls>
+                    <audio controls class="mb-{{$density === 'compact' ? '2' : '3'}}">
                         <source src="{{ route('media.preview', $media->uuid) }}" type="{{$mimeType}}">
                     </audio>
                 @elseif(hash_equals($type, 'video'))
-                    <video controls class="mb-3 w-100" style="max-height: 500px;">
+                    <video controls class="mb-{{$density === 'compact' ? '2' : '3'}} w-100" style="max-height: {{$density === 'compact' ? '300px' : '500px'}};">
                         <source src="{{ route('media.preview', $media->uuid) }}" type="{{$mimeType}}">
                     </video>
                 @else
-                    <img class="img-fluid rounded mb-3" src="{{asset('assets/placeholder.png')}}" alt="placeholder">
+                    <img class="img-fluid rounded mb-{{$density === 'compact' ? '2' : '3'}}"
+                         src="{{asset('assets/placeholder.png')}}" alt="placeholder">
                 @endif
 
-                <div id="keywords" class="d-flex flex-wrap gap-2 justify-content-center mb-3">
+                <div id="keywords" class="d-flex flex-wrap gap-2 justify-content-center mb-{{$density === 'compact' ? '2' : '3'}}">
                     @foreach($media->keywords as $keyword)
-                        <span class="badge bg-primary">{{ $keyword->name }}</span>
+                        <span class="badge bg-primary">{{$keyword->name}}</span>
                     @endforeach
                 </div>
 
@@ -52,7 +54,7 @@
                     <strong>{{__('Description')}}:</strong> {{$media->description}}
                 </p>
 
-                <ul class="list-unstyled mb-4 {{$theme === 'dark' ? 'text-light' : ''}}">
+                <ul class="list-unstyled mb-{{$density === 'compact' ? '3' : '4'}} {{$theme === 'dark' ? 'text-light' : ''}} {{$density === 'compact' ? 'small' : ''}}">
                     <li><strong>{{__('Type')}}:</strong> {{$media->type}}</li>
                     <li><strong>{{__('Extension')}}:</strong> {{pathinfo($media->route, PATHINFO_EXTENSION)}}</li>
                     <li><strong>{{__('Owner')}}:</strong> {{$media->owner}}</li>
@@ -60,17 +62,16 @@
                 </ul>
 
                 <div class="d-flex gap-2 justify-content-center flex-wrap">
-                    <a class="btn btn-success" href="{{route('media.download', $media->uuid)}}">{{__('Download')}}</a>
-                    <a class="btn btn-primary" href="{{route('media.edit', $media->uuid)}}">{{__('Edit')}}</a>
+                    <a class="btn btn-success {{$density === 'compact' ? 'btn-sm' : ''}}" href="{{route('media.download', $media->uuid)}}">{{__('Download')}}</a>
+                    <a class="btn btn-primary {{$density === 'compact' ? 'btn-sm' : ''}}" href="{{route('media.edit', $media->uuid)}}">{{__('Edit')}}</a>
                     <form action="{{route('media.destroy', $media)}}" method="POST"
                           onsubmit="return confirm('{{__('Are you sure you want to delete this media?')}}');" class="d-inline">
                         @csrf
                         @method('DELETE')
-                        <button type="submit" class="btn btn-danger">{{__('Delete')}}</button>
+                        <button type="submit" class="btn btn-danger {{$density === 'compact' ? 'btn-sm' : ''}}">{{__('Delete')}}</button>
                     </form>
                 </div>
             </div>
         </div>
     </div>
 @endsection
-

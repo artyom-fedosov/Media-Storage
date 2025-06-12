@@ -9,8 +9,9 @@
         @stack('styles')
         @stack('scripts')
     </head>
-    <body class="{{$theme === 'dark' ? 'bg-dark text-light' : 'bg-white text-dark'}}">
-        <x-navbar
+    <body class="{{$theme === 'dark' ? 'bg-dark text-light' : 'bg-white text-dark'}} {{$density === 'compact' ? 'density-compact' : ''}}">
+
+    <x-navbar
             :username="Auth::user()?->login ?? __('User')"
             :lang="__('Language')"
         />

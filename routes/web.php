@@ -2,13 +2,8 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\MediaController;
+use App\Http\Controllers\SettingsController;
 use Illuminate\Support\Facades\Route;
-
-Route::get('/theme/{theme}', function ($theme) {
-    session()->put('theme', $theme);
-    session()->save();
-    return redirect()->back();
-});
 
 Route::get('/language/{locale}', function ($locale) {
     session()->put('locale', $locale);
@@ -30,6 +25,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/media/download/{id}', [MediaController::class, 'download'])->name('media.download');
     Route::resource('media', MediaController::class);
 
-    Route::view('/settings', 'settings')->name('settings');
+    Route::get('/settings', [SettingsController::class, 'index'])->name('settings.index');
+    Route::post('/settings', [SettingsController::class, 'update'])->name('settings.update');
     Route::view('/', 'main');
 });

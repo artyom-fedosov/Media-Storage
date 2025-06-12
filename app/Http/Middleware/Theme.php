@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\View;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,10 +18,14 @@ class Theme
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (!Session::has('theme'))
-            Session::put('theme', 'light');
+        $user = Auth::user();
 
-        View::share('theme', Session::get('theme'));
+        $theme = $user?->theme_style ?? 'light';
+        $density = $user?->density ?? 'comfortable';
+
+        View::share('theme', $theme);
+        View::share('density', $density);
+
         return $next($request);
     }
 }

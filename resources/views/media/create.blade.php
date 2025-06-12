@@ -1,9 +1,9 @@
 @extends('layouts.app')
 @section('title', 'Upload new media')
 @section('content')
-    <div class="container mt-5">
+    <div class="container mt-{{ $density === 'compact' ? '3' : '5' }}">
         @if ($errors->any())
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <div class="alert alert-danger alert-dismissible fade show {{$density === 'compact' ? 'small' : ''}}" role="alert">
                 <ul class="mb-0">
                     @foreach ($errors->all() as $error)
                         <li>{{$error}}</li>
@@ -18,27 +18,34 @@
         <form method="POST" action="{{route('media.store')}}" enctype="multipart/form-data">
             @csrf
 
-            <div class="mb-3">
+            <div class="mb-{{$density === 'compact' ? '2' : '3'}}">
                 <label class="form-label {{$theme === 'dark' ? 'text-light' : 'text-dark'}}">{{__('Name')}}</label>
-                <input type="text" name="name" class="form-control {{$theme === 'dark' ? 'bg-dark text-light border-secondary' : ''}}" value="{{old('name')}}">
+                <input type="text" name="name"
+                       class="form-control {{$theme === 'dark' ? 'bg-dark text-light border-secondary' : ''}} {{$density === 'compact' ? 'form-control-sm' : ''}}"
+                       value="{{old('name')}}">
             </div>
 
-            <div class="mb-3">
+            <div class="mb-{{$density === 'compact' ? '2' : '3'}}">
                 <label class="form-label {{$theme === 'dark' ? 'text-light' : 'text-dark'}}">{{__('Upload media')}}</label>
-                <input type="file" name="media" class="form-control {{$theme === 'dark' ? 'bg-dark text-light border-secondary' : ''}}">
+                <input type="file" name="media"
+                       class="form-control {{$theme === 'dark' ? 'bg-dark text-light border-secondary' : ''}} {{$density === 'compact' ? 'form-control-sm' : ''}}">
             </div>
 
-            <div class="mb-3">
+            <div class="mb-{{$density === 'compact' ? '2' : '3'}}">
                 <label class="form-label {{$theme === 'dark' ? 'text-light' : 'text-dark'}}">{{__('Description')}}</label>
-                <textarea name="description" class="form-control {{$theme === 'dark' ? 'bg-dark text-light border-secondary' : ''}}" rows="5">{{old('description')}}</textarea>
+                <textarea name="description" rows="5"
+                          class="form-control {{$theme === 'dark' ? 'bg-dark text-light border-secondary' : ''}} {{$density === 'compact' ? 'form-control-sm' : ''}}">{{old('description')}}</textarea>
             </div>
 
-            <div class="mb-3">
+            <div class="mb-{{$density === 'compact' ? '2' : '3'}}">
                 <label class="form-label {{$theme === 'dark' ? 'text-light' : 'text-dark'}}">{{__('Keywords')}}</label>
-                <textarea name="keywords" class="form-control {{$theme === 'dark' ? 'bg-dark text-light border-secondary' : ''}}" rows="1">{{old('keywords')}}</textarea>
+                <textarea name="keywords" rows="1"
+                          class="form-control {{$theme === 'dark' ? 'bg-dark text-light border-secondary' : ''}} {{$density === 'compact' ? 'form-control-sm' : ''}}">{{old('keywords')}}</textarea>
             </div>
 
-            <button type="submit" class="btn {{$theme === 'dark' ? 'btn-light' : 'btn-success'}}">{{__('Upload media')}}</button>
+            <button type="submit" class="btn {{$theme === 'dark' ? 'btn-light' : 'btn-success'}} {{$density === 'compact' ? 'btn-sm' : ''}}">
+                {{__('Upload media')}}
+            </button>
         </form>
     </div>
 @endsection
