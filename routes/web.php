@@ -4,7 +4,13 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\MediaController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('language/{locale}', function ($locale) {
+Route::get('/theme/{theme}', function ($theme) {
+    session()->put('theme', $theme);
+    session()->save();
+    return redirect()->back();
+});
+
+Route::get('/language/{locale}', function ($locale) {
     session()->put('locale', $locale);
     session()->save();
     return redirect()->back();
