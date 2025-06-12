@@ -2,22 +2,12 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\MediaController;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    App::setLocale('en');
-    return view('main');
-});
-
-Route::get('/lv', function () {
-    App::setLocale('lv');
-    return view('main');
-});
-
-Route::get('/ru', function () {
-    App::setLocale('ru');
-    return view('main');
+Route::get('language/{locale}', function ($locale) {
+    session()->put('locale', $locale);
+    session()->save();
+    return redirect()->back();
 });
 
 Route::middleware('guest')->group(function () {
@@ -29,11 +19,11 @@ Route::middleware('guest')->group(function () {
 });
 
 Route::middleware('auth')->group(function () {
-
     Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('/media/preview/{id}', [MediaController::class, 'preview'])->name('media.preview');
     Route::get('/media/download/{id}', [MediaController::class, 'download'])->name('media.download');
     Route::resource('media', MediaController::class);
 
     Route::view('/settings', 'settings')->name('settings');
+    Route::view('/', 'main');
 });

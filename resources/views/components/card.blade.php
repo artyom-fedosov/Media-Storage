@@ -27,7 +27,7 @@
             @endforeach
         </div>
         <div class="mt-3 text-center">
-            <a class="btn btn-success" href="{{route('media.download',$media->uuid)}}">Download</a>
+            <a class="btn btn-success" href="{{route('media.download',$media->uuid)}}">{{__('Download')}}</a>
         </div>
     </div>
 </div>
