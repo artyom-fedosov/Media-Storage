@@ -36,4 +36,11 @@ class Media extends Model
             }
         });
     }
+
+    public function sharedUsers(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'user_media', 'media_uuid', 'user_login')
+            ->withPivot('read', 'write')
+            ->withTimestamps();
+    }
 }

@@ -42,5 +42,27 @@
                 {{__('Save')}}
             </button>
         </form>
+
+        @if(auth()->user()->login === $media->owner)
+            <form action="{{route('media.share', $media->uuid) }}" method="POST" class="mt-4 d-flex gap-2 align-items-center">
+                @csrf
+                <input
+                    type="text"
+                    name="user_login"
+                    class="form-control"
+                    placeholder="{{ __('Enter user login to share with') }}"
+                    required
+                >
+                <button type="submit" class="btn btn-primary">{{ __('Share') }}</button>
+            </form>
+
+            @if(session('share_error'))
+                <div class="alert alert-danger mt-2">{{ session('share_error') }}</div>
+            @endif
+
+            @if(session('share_success'))
+                <div class="alert alert-success mt-2">{{ session('share_success') }}</div>
+            @endif
+        @endif
     </div>
 @endsection

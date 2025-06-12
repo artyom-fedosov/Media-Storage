@@ -23,9 +23,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('/media/preview/{id}', [MediaController::class, 'preview'])->name('media.preview');
     Route::get('/media/download/{id}', [MediaController::class, 'download'])->name('media.download');
+    Route::post('/media/{uuid}/share', [MediaController::class, 'share'])->name('media.share');
     Route::resource('media', MediaController::class);
 
     Route::get('/settings', [SettingsController::class, 'index'])->name('settings.index');
     Route::post('/settings', [SettingsController::class, 'update'])->name('settings.update');
-    Route::view('/', 'main');
 });

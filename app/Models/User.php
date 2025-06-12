@@ -57,7 +57,7 @@ class User extends Authenticatable
 
     public function media(): BelongsToMany
     {
-        return $this->belongsToMany(Media::class)-withPivot('read', 'write');
+        return $this->belongsToMany(Media::class, 'user_media', 'user_login', 'media_uuid')
+            ->withPivot('read', 'write');
     }
-
 }

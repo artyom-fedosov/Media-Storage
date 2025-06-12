@@ -16,25 +16,24 @@ class MediaController extends Controller
      */
     public function index(Request $request)
     {
-       // $media = Media::where('owner', auth()->user()->login)->get(); // Implement logic to show only available media
-       // return view('media.index', compact('media')); // create media.index
-
         $user = auth()->user();
-        $query = Media::with('keywords')->where('owner', $user->login);
+        $ownedMedia = Media::where('owner', $user->login);
+        $sharedMedia = $user->media();
 
-        $selectedKeywords = $request->input('keywords', []);
-
-        if (!empty($selectedKeywords)) {
-            $query->whereHas('keywords', function ($q) use ($selectedKeywords) {
-                $q->whereIn('keywords.id', $selectedKeywords);
+        if ($request->filled('keywords')) {
+            $keywordIds = $request->input('keywords');
+            $ownedMedia->whereHas('keywords', function ($query) use ($keywordIds) {
+                $query->whereIn('keywords.id', $keywordIds);
+            });
+            $sharedMedia->whereHas('keywords', function ($query) use ($keywordIds) {
+                $query->whereIn('keywords.id', $keywordIds);
             });
         }
 
-        $media = $query->get();
+        $media = $ownedMedia->get()->merge($sharedMedia->get())->unique('uuid');
 
-        $allKeywords = \App\Models\Keyword::whereHas('media', function ($q) use ($user) {
-            $q->where('owner', $user->login);
-        })->get();
+        $allKeywords = Keyword::orderBy('name')->get();
+        $selectedKeywords = $request->input('keywords', []);
 
         return view('media.index', compact('media', 'allKeywords', 'selectedKeywords'));
     }
@@ -242,5 +241,28 @@ class MediaController extends Controller
 
     }
 
+    public function share(Request $request, $uuid)
+    {
+        $media = Media::where('uuid', $uuid)->firstOrFail();
 
+        if ($media->owner !== auth()->user()->login) {
+            abort(403);
+        }
+
+        $request->validate([
+            'user_login' => 'required|string|exists:users,login',
+        ]);
+
+        $userLoginToShare = $request->input('user_login');
+
+        if ($userLoginToShare === auth()->user()->login) {
+            return back()->with('share_error', __('You cannot share media with yourself.'));
+        }
+
+        $media->sharedUsers()->syncWithoutDetaching([
+            $userLoginToShare => ['read' => true, 'write' => false],
+        ]);
+
+        return back()->with('share_success', __('Media shared successfully with :user.', ['user' => $userLoginToShare]));
+    }
 }
