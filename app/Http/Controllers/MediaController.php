@@ -14,10 +14,29 @@ class MediaController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $media = Media::where('owner', auth()->user()->login)->get(); // Implement logic to show only available media
-        return view('media.index', compact('media')); // create media.index
+       // $media = Media::where('owner', auth()->user()->login)->get(); // Implement logic to show only available media
+       // return view('media.index', compact('media')); // create media.index
+
+        $user = auth()->user();
+        $query = Media::with('keywords')->where('owner', $user->login);
+
+        $selectedKeywords = $request->input('keywords', []);
+
+        if (!empty($selectedKeywords)) {
+            $query->whereHas('keywords', function ($q) use ($selectedKeywords) {
+                $q->whereIn('keywords.id', $selectedKeywords);
+            });
+        }
+
+        $media = $query->get();
+
+        $allKeywords = \App\Models\Keyword::whereHas('media', function ($q) use ($user) {
+            $q->where('owner', $user->login);
+        })->get();
+
+        return view('media.index', compact('media', 'allKeywords', 'selectedKeywords'));
     }
 
     /**

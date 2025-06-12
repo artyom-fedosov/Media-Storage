@@ -1,6 +1,32 @@
 @extends('layouts.app')
 @section('title', __('Available media'))
 @section('content')
+    <div class="container my-4">
+        <form method="GET" action="{{ route('media.index') }}">
+            <div class="d-flex flex-wrap gap-2 align-items-center">
+                @foreach($allKeywords as $keyword)
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input"
+                               type="checkbox"
+                               name="keywords[]"
+                               value="{{ $keyword->id }}"
+                               id="keyword_{{ $keyword->id }}"
+                               onchange="this.form.submit()"
+                            {{ in_array($keyword->id, $selectedKeywords ?? []) ? 'checked' : '' }}>
+                        <label class="form-check-label" for="keyword_{{ $keyword->id }}">
+                            {{ $keyword->name }}
+                        </label>
+                    </div>
+                @endforeach
+                @if(!empty($selectedKeywords))
+                    <a href="{{ route('media.index') }}" class="btn btn-outline-secondary btn-sm ms-2">
+                        {{ __('Clear') }}
+                    </a>
+                @endif
+            </div>
+        </form>
+    </div>
+
     <div class="container py-{{$density === 'compact' ? '2' : '4'}}">
         <h1 class="h3 mb-{{$density === 'compact' ? '3' : '4'}} {{$theme === 'dark' ? 'text-light' : 'text-dark'}}">
             {{__('Available media')}}
