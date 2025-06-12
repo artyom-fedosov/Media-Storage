@@ -2,5 +2,15 @@
     "Media Storage": "Multivides krātuve",
     "Upload Media": "Augšupielādējiet multividi",
     "User" : "Viesis",
-    "Language": "Latviešu"
+    "Language": "Latviešu",
+    "Available media": "Pieejamas multivides",
+    "Settings": "Iestatījumi",
+    "Save": "Saglabāt",
+    "Theme": "Tēma",
+    "Light": "Gaiša",
+    "Dark": "Tumša",
+    "Density": "Blīvums",
+    "Comfortable": "Ērts",
+    "Compact": "Kompakts",
+    "No media found.": "Nav atrasta neviena multivide."
 }

@@ -5,8 +5,6 @@ use App\Http\Controllers\MediaController;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
 
-
-
 Route::get('/', function () {
     App::setLocale('en');
     return view('main');
@@ -22,7 +20,6 @@ Route::get('/ru', function () {
     return view('main');
 });
 
-
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('showLogin');
     Route::post('/login', [AuthController::class, 'login'])->name('login');
@@ -37,4 +34,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/media/preview/{id}', [MediaController::class, 'preview'])->name('media.preview');
     Route::get('/media/download/{id}', [MediaController::class, 'download'])->name('media.download');
     Route::resource('media', MediaController::class);
+
+    Route::view('/settings', 'settings')->name('settings');
 });

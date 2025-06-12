@@ -2,5 +2,15 @@
     "Media Storage": "Media Storage",
     "Upload Media" : "Upload Media",
     "User" : "Guest",
-    "Language": "English"
+    "Language": "English",
+    "Available media": "Available media",
+    "Settings": "Settings",
+    "Save": "Save",
+    "Theme": "Theme",
+    "Light": "Light",
+    "Dark": "Dark",
+    "Density": "Density",
+    "Comfortable": "Comfortable",
+    "Compact": "Compact",
+    "No media found.": "No media found."
 }

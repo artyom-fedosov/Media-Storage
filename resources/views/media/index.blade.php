@@ -1,7 +1,7 @@
 @extends('layouts/app')
 @section('title', 'Available media')
 @section('content')
-    <h1 class="container">Available media</h1>
+    <h1 class="container">{{__('Available media')}}</h1>
     @if(session('success'))
         <div class="alert alert-success">
             {{ session('success') }}
@@ -14,6 +14,6 @@
             @endforeach
         </div>
     @else
-        <p>No media found.</p>
+        <p>{{__('No media found.')}}</p>
     @endif
 @endsection

@@ -8,9 +8,9 @@
             <a class="btn btn-secondary h1 fs-1 text-dark  mb-0" href="{{route('media.index')}}">{{__('Media Storage')}}</a>
             <a class="btn btn-secondary   fs-1 text-dark  mb-0" href="{{route('media.create')}}">{{__('Upload Media')}}</a>
             <p class="navbar-text  fs-1 text-dark  mb-0">{{$username}}</p>
-            <button class="btn btn-secondary" id="settingsButton" >
-                <img src="{{asset('/assets/settings.png')}}" class="img-fluid" style="width:50px; height:50px"alt="settings">
-            </button>
+            <a class="btn btn-secondary" id="settingsButton" href="{{route('settings')}}">
+                <img src="{{asset('/assets/settings.png')}}" class="img-fluid" style="width:50px; height:50px" alt="settings">
+            </a>
             <a class="navbar-text  fs-1 text-dark  mb-0" href="{{route('logout')}}">Logout</a>
         @endauth
         <div class="dropdown" id="languageMenu">
