@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Keyword;
 use App\Models\Media;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -117,6 +118,27 @@ class MediaController extends Controller
             ->with('success', __('Media updated successfully.'));
     }
 
+    public function pdf(Media $media){
+        $originalPath = $media->route;
+        $basePath = preg_replace('/\.[^.]+$/', '', $originalPath);
+        $pdfPath = $basePath . '.pdf';
+
+        if (!file_exists(Storage::disk('private')->path($pdfPath))) {
+
+            $outputDir = dirname(Storage::disk('private')->path($media->route));
+            $escapedPath = escapeshellarg(Storage::disk('private')->path($media->route));
+            $escapedOutput = escapeshellarg($outputDir);
+
+            $command = "libreoffice --headless --convert-to pdf $escapedPath --outdir $escapedOutput";
+            exec($command, $output, $resultCode);
+
+            if ($resultCode !== 0 || !file_exists(Storage::disk('private')->path($pdfPath))) {
+                abort(404, __("Convertion error"));
+            }
+        }
+        return response()->file(Storage::disk('private')->path($pdfPath));
+    }
+
     /**
      * Remove the specified resource from storage.
      */
@@ -129,6 +151,17 @@ class MediaController extends Controller
         if(!Storage::disk('private')->exists($path)){
             abort(404, __("Media not found"));
         }
+
+        $mimeType= Storage::disk('private')->mimeType($medium->route);
+        if (!hash_equals($mimeType, 'application/pdf' )) {
+            $fullPath = Storage::disk('private')->path($path);
+            $pdfPath = preg_replace('/\.[^.]+$/', '', $fullPath) . '.pdf';
+
+            if (file_exists($pdfPath)) {
+                unlink($pdfPath);
+            }
+        }
+
         Storage::disk('private')->delete($path);
         $medium->delete();
         return redirect()->route('media.index')->with('success', __('Media deleted successfully.'));
@@ -143,6 +176,32 @@ class MediaController extends Controller
         $path = $media->route;
         if(!Storage::disk('private')->exists($path)){
             abort(404, __("Media not found"));
+        }
+
+        if((hash_equals($media->type, 'application'))){
+            $mimeType= Storage::disk('private')->mimeType($media->route);
+            $unsupported = [
+                'application/json',
+                'application/xml',
+                'application/zip',
+                'application/x-rar-compressed',
+                'application/x-7z-compressed',
+                'application/octet-stream',
+                'application/x-msdownload',
+                'application/x-java-archive',
+                'application/x-bittorrent',
+                'application/pkcs7-signature',
+                'application/x-httpd-php',
+                'application/x-python',
+                'application/x-font-ttf'
+            ];
+            if (hash_equals($mimeType, 'application/pdf' )) {
+                return response()->file(Storage::disk('private')->path($path));
+            }
+            if (in_array($mimeType, $unsupported)) {
+                return response()->file(public_path('assets/document.jpg'));
+            }
+            return $this->pdf($media);
         }
 
         return response()->file(Storage::disk('private')->path($path));
@@ -163,5 +222,6 @@ class MediaController extends Controller
         return response()->download(Storage::disk('private')->path($path));
 
     }
+
 
 }

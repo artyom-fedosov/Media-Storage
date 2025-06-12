@@ -39,5 +39,6 @@
     "Not authorized to view media": "Не авторизован для просмотра мультимедиа",
     "Media not found": "Мультимедиа не найдено",
     "Media deleted successfully.": "Мультимедиа успешно удалено.",
-    "Edit media": "Редактировать мультимедиа"
+    "Edit media": "Редактировать мультимедиа",
+    "Convertion error" : "Ошибка конвертации"
 }

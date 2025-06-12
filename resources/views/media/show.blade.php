@@ -1,3 +1,4 @@
+@php use Illuminate\Support\Facades\Storage; @endphp
 @extends('layouts.app')
 @section('title', $media->name)
 @section('content')
@@ -21,16 +22,22 @@
 
                 @php
                     $type = $media->type;
+                    $mimeType = Storage::disk('private')->mimeType($media->route);
                 @endphp
 
                 @if(hash_equals($type, 'image'))
                     <img class="img-fluid rounded mb-3" src="{{route('media.preview', $media->uuid)}}" alt="preview">
                 @elseif(hash_equals($type, 'text') || hash_equals($type, 'application'))
-                    <img class="img-fluid rounded mb-3" src="{{asset('assets/document.jpg')}}" alt="document preview">
+                    <iframe src="{{route('media.preview', $media->uuid)}}" width="100%"
+                            height="600px"></iframe>
                 @elseif(hash_equals($type, 'audio'))
-                    <img class="img-fluid rounded mb-3" src="{{asset('assets/audio.png')}}" alt="audio preview">
+                    <audio controls>
+                        <source src="{{ route('media.preview', $media->uuid) }}" type="{{$mimeType}}">
+                    </audio>
                 @elseif(hash_equals($type, 'video'))
-                    <img class="img-fluid rounded mb-3" src="{{asset('assets/video.jpg')}}" alt="video preview">
+                    <video controls class="mb-3 w-100" style="max-height: 500px;">
+                        <source src="{{ route('media.preview', $media->uuid) }}" type="{{$mimeType}}">
+                    </video>
                 @else
                     <img class="img-fluid rounded mb-3" src="{{asset('assets/placeholder.png')}}" alt="placeholder">
                 @endif

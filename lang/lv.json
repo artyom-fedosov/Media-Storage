@@ -39,5 +39,6 @@
     "Not authorized to view media": "Nav autorizēts, lai skatītu multivides",
     "Media not found": "Multivide nav atrasta",
     "Media deleted successfully.": "Multivide ir veiksmigi nodzēsta.",
-    "Edit media": "Rediģēt multividi"
+    "Edit media": "Rediģēt multividi",
+    "Convertion error" : "Konvertācijas kļūda"
 }
