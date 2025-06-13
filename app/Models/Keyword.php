@@ -9,7 +9,8 @@ class Keyword extends Model
 {
     protected $fillable=['name'];
 
-    public function media(): BelongsToMany{
+    public function media(): BelongsToMany
+    {
         return $this->belongsToMany(Media::class);
     }
 }

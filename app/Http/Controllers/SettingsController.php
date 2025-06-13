@@ -2,19 +2,24 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
+use Illuminate\Foundation\Application;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
 
 class SettingsController extends Controller
 {
-    public function index()
+    public function index(): View|Application|Factory
     {
         $theme = Auth::user()?->theme_style ?? 'light';
         $density = Auth::user()?->density ?? 'comfortable';
         return view('settings', compact('theme', 'density'));
     }
 
-    public function update(Request $request)
+    public function update(Request $request): RedirectResponse
     {
         $request->validate([
             'theme' => ['required', 'in:light,dark'],

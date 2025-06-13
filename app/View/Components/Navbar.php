@@ -9,8 +9,8 @@ use Illuminate\View\Component;
 class Navbar extends Component
 {
 
-    public $username;
-    public $lang;
+    public string $username;
+    public string $lang;
     public function __construct($username, $lang = 'English')
     {
         $this->username = $username;

@@ -12,7 +12,7 @@
             <div class="mb-3">
                 <label for="login" class="form-label">{{__('Login')}}</label>
                 <input type="text" name="login" class="form-control" required
-                       value="{{ old('login') }}">
+                       value="{{old('login')}}">
                 @error('login') <small class="text-danger">{{$message}}</small> @enderror
             </div>
             <div class="mb-3">

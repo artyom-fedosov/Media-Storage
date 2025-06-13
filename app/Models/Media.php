@@ -3,9 +3,17 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use \Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Str;
 
+/**
+ * @property string $uuid
+ * @property string $owner
+ * @property string $type
+ * @property string $name
+ * @property string $route
+ * @property string $description
+ **/
 class Media extends Model
 {
     protected $fillable = ['owner', 'type', 'name', 'image','route', 'description'];

@@ -4,20 +4,23 @@ namespace App\Http\Controllers;
 
 use App\Models\Keyword;
 use App\Models\Media;
-use Barryvdh\DomPDF\Facade\Pdf;
+use App\Models\User;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
+use Illuminate\Foundation\Application;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class MediaController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index(Request $request)
+    public function index(Request $request): View|Application|Factory
     {
         $user = auth()->user();
-        $ownedMedia = Media::where('owner', $user->login);
+        $ownedMedia = Media::query()->where('owner', $user->login);
         $sharedMedia = $user->media();
 
         if ($request->filled('keywords')) {
@@ -32,24 +35,18 @@ class MediaController extends Controller
 
         $media = $ownedMedia->get()->merge($sharedMedia->get())->unique('uuid');
 
-        $allKeywords = Keyword::orderBy('name')->get();
+        $allKeywords = Keyword::query()->orderBy('name')->get();
         $selectedKeywords = $request->input('keywords', []);
 
         return view('media.index', compact('media', 'allKeywords', 'selectedKeywords'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function create(): View|Application|Factory
     {
         return view('media.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
@@ -62,72 +59,61 @@ class MediaController extends Controller
         $parts = explode('/', $mimeType);
         $type = $parts[0];
         $path = $file->store('uploads', 'private');
-        $media = Media::create([
-            'name' => $request->name,
+        $media = Media::query()->create([
+            'name' => $request->input('name'),
             'owner' => Auth::id(),
             'type' => $type,
             'route' => $path,
-            'description' => $request->description
+            'description' => $request->input('description')
         ]);
 
-
         if ($request->filled('keywords')) {
-            $keywords = explode(',', $request->keywords);
+            $keywords = explode(',', $request->input('keywords'));
             foreach ($keywords as $word) {
                 $word = trim($word);
                 if ($word) {
-                    $keyword = Keyword::firstOrCreate(['name' => $word]);
+                    $keyword = Keyword::query()->firstOrCreate(['name' => $word]);
                     $media->keywords()->attach($keyword->id);
                 }
             }
         }
 
-
         return redirect()->route('media.index')->with('success', __('Media created successfully.'));
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function show(string $id): View|Application|Factory
     {
-        $media = Media::find($id);
+        $media = Media::query()->find($id);
         return view('media.show', compact('media'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function edit(string $id): View|Application|Factory
     {
-        $media = Media::find($id);
+        $media = Media::query()->find($id);
         return view('media.edit', compact('media'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function update(Request $request, string $id): RedirectResponse
     {
         request()->validate([
             'name' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
             'keywords' => ['nullable', 'string'],
         ]);
-        $media = Media::find($id);
+        $media = Media::query()->find($id);
         $media->update([
-            'name' => $request->name,
-            'description' => $request->description,
+            'name' => $request->input('name'),
+            'description' => $request->input('description'),
         ]);
 
         $media->keywords()->detach();
 
         if ($request->filled('keywords')) {
-            $keywords = explode(',', $request->keywords);
+            $keywords = explode(',', $request->input('keywords'));
             foreach ($keywords as $word) {
                 $word = trim($word);
                 if ($word) {
-                    $keyword = Keyword::firstOrCreate(['name' => $word]);
+                    $keyword = Keyword::query()->firstOrCreate(['name' => $word]);
                     $media->keywords()->attach($keyword->id);
                 }
             }
@@ -136,13 +122,13 @@ class MediaController extends Controller
             ->with('success', __('Media updated successfully.'));
     }
 
-    public function pdf(Media $media){
+    public function pdf(Media $media): BinaryFileResponse
+    {
         $originalPath = $media->route;
         $basePath = preg_replace('/\.[^.]+$/', '', $originalPath);
         $pdfPath = $basePath . '.pdf';
 
         if (!file_exists(Storage::disk('private')->path($pdfPath))) {
-
             $outputDir = dirname(Storage::disk('private')->path($media->route));
             $escapedPath = escapeshellarg(Storage::disk('private')->path($media->route));
             $escapedOutput = escapeshellarg($outputDir);
@@ -151,16 +137,13 @@ class MediaController extends Controller
             exec($command, $output, $resultCode);
 
             if ($resultCode !== 0 || !file_exists(Storage::disk('private')->path($pdfPath))) {
-                abort(404, __("Convertion error"));
+                abort(404, __("Conversion error"));
             }
         }
         return response()->file(Storage::disk('private')->path($pdfPath));
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Request $request, Media $medium) //?????
+    public function destroy(Media $medium): RedirectResponse
     {
         if($medium->owner !== Auth::id()){
             abort(403, __('Not authorized to view media'));
@@ -185,8 +168,9 @@ class MediaController extends Controller
         return redirect()->route('media.index')->with('success', __('Media deleted successfully.'));
     }
 
-    public function preview(string $id){
-        $media = Media::where('uuid', $id)->firstOrFail();
+    public function preview(string $id): BinaryFileResponse
+    {
+        $media = Media::query()->where('uuid', $id)->firstOrFail();
 
         if($media->owner !== Auth::id()){
             abort(403, __("Not authorized to view media"));
@@ -223,11 +207,11 @@ class MediaController extends Controller
         }
 
         return response()->file(Storage::disk('private')->path($path));
-
     }
 
-    public function download(string $id){
-        $media = Media::where('uuid', $id)->firstOrFail();
+    public function download(string $id): BinaryFileResponse
+    {
+        $media = Media::query()->where('uuid', $id)->firstOrFail();
 
         if($media->owner !== Auth::id()){
             abort(403, __("Not authorized to view media"));
@@ -238,12 +222,11 @@ class MediaController extends Controller
         }
 
         return response()->download(Storage::disk('private')->path($path));
-
     }
 
-    public function share(Request $request, $uuid)
+    public function share(Request $request, $uuid): RedirectResponse
     {
-        $media = Media::where('uuid', $uuid)->firstOrFail();
+        $media = Media::query()->where('uuid', $uuid)->firstOrFail();
 
         if ($media->owner !== auth()->user()->login) {
             abort(403);
