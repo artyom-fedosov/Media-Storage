@@ -35,7 +35,15 @@ class MediaController extends Controller
 
         $media = $ownedMedia->get()->merge($sharedMedia->get())->unique('uuid');
 
-        $allKeywords = Keyword::query()->orderBy('name')->get();
+        $allKeywords = Keyword::whereHas('media', function ($query) use ($user) {
+            $query->where(function ($q) use ($user) {
+                $q->where('owner', $user->login)
+                    ->orWhereHas('owners', function ($q2) use ($user) {
+                        $q2->where('users.login', $user->login);
+                    });
+            });
+        })->orderBy('name')->get();
+
         $selectedKeywords = $request->input('keywords', []);
 
         return view('media.index', compact('media', 'allKeywords', 'selectedKeywords'));

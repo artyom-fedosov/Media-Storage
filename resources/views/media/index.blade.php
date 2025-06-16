@@ -2,27 +2,47 @@
 @section('title', __('Available media'))
 @section('content')
     <div class="container my-4">
-        <form method="GET" action="{{ route('media.index') }}">
-            <div class="d-flex flex-wrap gap-2 align-items-center">
-                @foreach($allKeywords as $keyword)
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input"
-                               type="checkbox"
-                               name="keywords[]"
-                               value="{{ $keyword->id }}"
-                               id="keyword_{{ $keyword->id }}"
-                               onchange="this.form.submit()"
-                            {{ in_array($keyword->id, $selectedKeywords ?? []) ? 'checked' : '' }}>
-                        <label class="form-check-label" for="keyword_{{ $keyword->id }}">
-                            {{ $keyword->name }}
-                        </label>
+        <form method="GET" action="{{route('media.index')}}">
+            <div class="card shadow-sm border-0
+            {{$theme === 'dark' ? 'bg-dark text-light' : 'bg-white text-dark'}}
+            {{$density === 'compact' ? 'p-2' : 'p-4'}}">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">
+                        {{__('Filter by keywords')}}
+                    </h5>
+                    <div class="d-flex flex-wrap gap-2 align-items-center">
+                        @foreach($allKeywords as $keyword)
+                            @php
+                                $isChecked = in_array($keyword->id, $selectedKeywords ?? []);
+                                $bgClass = $isChecked
+                                    ? ($theme === 'dark' ? 'bg-primary text-white' : 'bg-primary text-white')
+                                    : ($theme === 'dark' ? 'bg-secondary text-light' : 'bg-light text-dark');
+                                $paddingClass = $density === 'compact' ? 'px-2 py-1 small' : 'px-3 py-2';
+                            @endphp
+                            <div class="form-check form-check-inline rounded-pill border {{$bgClass}} {{$paddingClass}}"
+                                 style="cursor: pointer;"
+                                 onclick="document.getElementById('keyword_{{$keyword->id}}').click()">
+                                <input class="form-check-input d-none"
+                                       type="checkbox"
+                                       name="keywords[]"
+                                       value="{{$keyword->id}}"
+                                       id="keyword_{{$keyword->id}}"
+                                       onchange="this.form.submit()"
+                                    {{$isChecked ? 'checked' : ''}}>
+                                <label class="form-check-label m-0" for="keyword_{{$keyword->id}}">
+                                    {{$keyword->name}}
+                                </label>
+                            </div>
+                        @endforeach
+
+                        @if(!empty($selectedKeywords))
+                            <a href="{{route('media.index')}}"
+                               class="btn btn-sm {{$theme === 'dark' ? 'btn-outline-light' : 'btn-outline-secondary'}}">
+                                {{__('Clear')}}
+                            </a>
+                        @endif
                     </div>
-                @endforeach
-                @if(!empty($selectedKeywords))
-                    <a href="{{ route('media.index') }}" class="btn btn-outline-secondary btn-sm ms-2">
-                        {{ __('Clear') }}
-                    </a>
-                @endif
+                </div>
             </div>
         </form>
     </div>
