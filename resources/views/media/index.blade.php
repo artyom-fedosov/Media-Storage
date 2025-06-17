@@ -19,17 +19,15 @@
                                     : ($theme === 'dark' ? 'bg-secondary text-light' : 'bg-light text-dark');
                                 $paddingClass = $density === 'compact' ? 'px-2 py-1 small' : 'px-3 py-2';
                             @endphp
-                            <div class="form-check form-check-inline rounded-pill border {{$bgClass}} {{$paddingClass}}"
-                                 style="cursor: pointer;"
-                                 onclick="document.getElementById('keyword_{{$keyword->id}}').click()">
-                                <input class="form-check-input d-none"
+                            <div class="form-check form-check-inline rounded-pill border {{$bgClass}} {{$paddingClass}}">
+                                <input class="form-check-input visually-hidden"
                                        type="checkbox"
                                        name="keywords[]"
                                        value="{{$keyword->id}}"
                                        id="keyword_{{$keyword->id}}"
                                        onchange="this.form.submit()"
                                     {{$isChecked ? 'checked' : ''}}>
-                                <label class="form-check-label m-0" for="keyword_{{$keyword->id}}">
+                                <label class="form-check-label m-0 w-100" for="keyword_{{$keyword->id}}" style="cursor:pointer;">
                                     {{$keyword->name}}
                                 </label>
                             </div>

@@ -179,10 +179,13 @@ class MediaController extends Controller
     public function preview(string $id): BinaryFileResponse
     {
         $media = Media::query()->where('uuid', $id)->firstOrFail();
+        $user = User::find(Auth::id());
 
-        if($media->owner !== Auth::id()){
+        if($media->owner !== Auth::id() && !$user->canAccess($media) )
+        {
             abort(403, __("Not authorized to view media"));
         }
+
         $path = $media->route;
         if(!Storage::disk('private')->exists($path)){
             abort(404, __("Media not found"));

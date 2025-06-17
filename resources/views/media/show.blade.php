@@ -1,16 +1,18 @@
-@php use Illuminate\Support\Facades\Storage; @endphp
+@php use App\Models\User;use Illuminate\Support\Facades\Auth;use Illuminate\Support\Facades\Storage; @endphp
 @extends('layouts.app')
 @section('title', $media->name)
 @section('content')
     <div class="container py-{{$density === 'compact' ? '3' : '4'}}">
         @if(session('success'))
-            <div class="alert alert-success alert-dismissible fade show {{$density === 'compact' ? 'small' : ''}}" role="alert">
+            <div class="alert alert-success alert-dismissible fade show {{$density === 'compact' ? 'small' : ''}}"
+                 role="alert">
                 {{session('success')}}
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         @endif
         @if(session('error'))
-            <div class="alert alert-danger alert-dismissible fade show {{$density === 'compact' ? 'small' : ''}}" role="alert">
+            <div class="alert alert-danger alert-dismissible fade show {{$density === 'compact' ? 'small' : ''}}"
+                 role="alert">
                 {{session('error')}}
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
@@ -36,7 +38,8 @@
                         <source src="{{ route('media.preview', $media->uuid) }}" type="{{$mimeType}}">
                     </audio>
                 @elseif(hash_equals($type, 'video'))
-                    <video controls class="mb-{{$density === 'compact' ? '2' : '3'}} w-100" style="max-height: {{$density === 'compact' ? '300px' : '500px'}};">
+                    <video controls class="mb-{{$density === 'compact' ? '2' : '3'}} w-100"
+                           style="max-height: {{$density === 'compact' ? '300px' : '500px'}};">
                         <source src="{{ route('media.preview', $media->uuid) }}" type="{{$mimeType}}">
                     </video>
                 @else
@@ -44,7 +47,8 @@
                          src="{{asset('assets/placeholder.png')}}" alt="placeholder">
                 @endif
 
-                <div id="keywords" class="d-flex flex-wrap gap-2 justify-content-center mb-{{$density === 'compact' ? '2' : '3'}}">
+                <div id="keywords"
+                     class="d-flex flex-wrap gap-2 justify-content-center mb-{{$density === 'compact' ? '2' : '3'}}">
                     @foreach($media->keywords as $keyword)
                         <span class="badge bg-primary">{{$keyword->name}}</span>
                     @endforeach
@@ -62,14 +66,21 @@
                 </ul>
 
                 <div class="d-flex gap-2 justify-content-center flex-wrap">
-                    <a class="btn btn-success {{$density === 'compact' ? 'btn-sm' : ''}}" href="{{route('media.download', $media->uuid)}}">{{__('Download')}}</a>
-                    <a class="btn btn-primary {{$density === 'compact' ? 'btn-sm' : ''}}" href="{{route('media.edit', $media->uuid)}}">{{__('Edit')}}</a>
+                    <a class="btn btn-success {{$density === 'compact' ? 'btn-sm' : ''}}"
+                       href="{{route('media.download', $media->uuid)}}">{{__('Download')}}</a>
+                    <a class="btn btn-primary {{$density === 'compact' ? 'btn-sm' : ''}}"
+                       href="{{route('media.edit', $media->uuid)}}">{{__('Edit')}}</a>
+
+                    @if($media->owner === Auth::id())
                     <form action="{{route('media.destroy', $media)}}" method="POST"
-                          onsubmit="return confirm('{{__('Are you sure you want to delete this media?')}}');" class="d-inline">
+                          onsubmit="return confirm('{{__('Are you sure you want to delete this media?')}}');"
+                          class="d-inline">
                         @csrf
                         @method('DELETE')
-                        <button type="submit" class="btn btn-danger {{$density === 'compact' ? 'btn-sm' : ''}}">{{__('Delete')}}</button>
+                        <button type="submit"
+                                class="btn btn-danger {{$density === 'compact' ? 'btn-sm' : ''}}">{{__('Delete')}}</button>
                     </form>
+                    @endif
                 </div>
             </div>
         </div>

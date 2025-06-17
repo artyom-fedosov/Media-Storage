@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use \Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Facades\Auth;
 
 /**
  * @property string $login
@@ -63,4 +64,9 @@ class User extends Authenticatable
         return $this->belongsToMany(Media::class, 'user_media',
             'user_login', 'media_uuid')->withPivot('read', 'write');
     }
+
+    public function canAccess(Media $media): bool{
+        return $this->media()->where('media_uuid', $media->uuid)->exists();
+    }
+
 }

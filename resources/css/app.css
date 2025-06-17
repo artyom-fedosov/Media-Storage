@@ -19,3 +19,7 @@
 .mt-3.text-center {
     margin-top: 0.5rem;
 }
+.form-check-label.w-100 {
+    display: block;
+    width: 100%;
+}

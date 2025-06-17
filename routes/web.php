@@ -11,6 +11,11 @@ Route::get('/language/{locale}', function ($locale) {
     return redirect()->back();
 });
 
+Route::get('/', function () {
+    return redirect()->route('media.index');
+});
+
+
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('showLogin');
     Route::post('/login', [AuthController::class, 'login'])->name('login');
