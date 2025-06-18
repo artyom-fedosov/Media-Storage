@@ -76,8 +76,7 @@
                     $user = auth()->user();
                     $canDelete = $user && (
                         strtolower($user->role) === 'admin' ||
-                        $user->login === $media->owner ||
-                        $media->sharedWith()->where('users.login', $user->login)->exists()
+                        $user->login === $media->owner
                     );
                 @endphp
 

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Keyword;
 use App\Models\Media;
 use App\Models\User;
+use App\Policies\MediaPolicy;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Foundation\Application;
@@ -208,12 +209,11 @@ class MediaController extends Controller
         return redirect()->route('media.index')->with('success', __('Media deleted successfully.'));
     }
 
-    public function preview(string $id): BinaryFileResponse
+    public function preview(string $id, Request $request): BinaryFileResponse
     {
         $media = Media::where('uuid', $id)->firstOrFail();
         $user = auth()->user();
-
-        if ($media->owner !== $user->login && !$user->canAccess($media)) {
+        if ($request->user()->cannot('view',$media)) {
             abort(403, __("Not authorized to view media"));
         }
 
