@@ -42,8 +42,11 @@
                 {{__('Save')}}
             </button>
         </form>
-
-        @if(auth()->user()->login === $media->owner)
+        @php
+        $user = auth()->user();
+        $statement = ($user->login === $media->owner || $user->role === "admin");
+        @endphp
+        @if($statement)
             <form action="{{route('media.share', $media->uuid) }}" method="POST" class="mt-4 d-flex gap-2 align-items-center">
                 @csrf
                 <input

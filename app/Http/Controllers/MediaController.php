@@ -270,7 +270,7 @@ class MediaController extends Controller
     {
         $media = Media::query()->where('uuid', $uuid)->firstOrFail();
 
-        if ($media->owner !== auth()->user()->login) {
+        if ($request->user()->cannot('view',$media)) {
             abort(403);
         }
 
