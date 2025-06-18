@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
@@ -32,6 +33,13 @@ class AuthController extends Controller
         ]);
 
         $user = User::query()->create($validated);
+
+        Setting::create([
+            'user_login' => $user->login,
+            'theme_style' => 'light',
+            'density' => 'comfortable'
+        ]);
+
         auth()->login($user);
 
         return redirect()->route('media.index');

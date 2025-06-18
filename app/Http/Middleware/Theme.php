@@ -17,8 +17,13 @@ class Theme
     {
         $user = Auth::user();
 
-        $theme = $user?->theme_style ?? 'light';
-        $density = $user?->density ?? 'comfortable';
+        $theme = 'light';
+        $density = 'comfortable';
+
+        if ($user && $user->setting) {
+            $theme = $user->setting->theme_style ?? 'light';
+            $density = $user->setting->density ?? 'comfortable';
+        }
 
         View::share('theme', $theme);
         View::share('density', $density);

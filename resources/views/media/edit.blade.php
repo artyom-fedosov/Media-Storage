@@ -50,18 +50,18 @@
                     type="text"
                     name="user_login"
                     class="form-control"
-                    placeholder="{{ __('Enter user login to share with') }}"
+                    placeholder="{{__('Enter user login to share with')}}"
                     required
                 >
-                <button type="submit" class="btn btn-primary">{{ __('Share') }}</button>
+                <button type="submit" class="btn btn-primary">{{__('Share')}}</button>
             </form>
 
             @if(session('share_error'))
-                <div class="alert alert-danger mt-2">{{ session('share_error') }}</div>
+                <div class="alert alert-danger mt-2">{{session('share_error')}}</div>
             @endif
 
             @if(session('share_success'))
-                <div class="alert alert-success mt-2">{{ session('share_success') }}</div>
+                <div class="alert alert-success mt-2">{{session('share_success')}}</div>
             @endif
         @endif
     </div>

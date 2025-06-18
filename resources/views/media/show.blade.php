@@ -70,18 +70,28 @@
                        href="{{route('media.download', $media->uuid)}}">{{__('Download')}}</a>
                     <a class="btn btn-primary {{$density === 'compact' ? 'btn-sm' : ''}}"
                        href="{{route('media.edit', $media->uuid)}}">{{__('Edit')}}</a>
+                </div>
 
-                    @if($media->owner === Auth::id())
-                    <form action="{{route('media.destroy', $media)}}" method="POST"
-                          onsubmit="return confirm('{{__('Are you sure you want to delete this media?')}}');"
-                          class="d-inline">
+                @php
+                    $user = auth()->user();
+                    $canDelete = $user && (
+                        strtolower($user->role) === 'admin' ||
+                        $user->login === $media->owner ||
+                        $media->sharedWith()->where('users.login', $user->login)->exists()
+                    );
+                @endphp
+
+                @if($canDelete)
+                    <form action="{{route('media.destroy', $media->uuid)}}" method="POST" class="mt-3 d-inline-block m-0">
                         @csrf
                         @method('DELETE')
                         <button type="submit"
-                                class="btn btn-danger {{$density === 'compact' ? 'btn-sm' : ''}}">{{__('Delete')}}</button>
+                                class="btn btn-danger {{$density === 'compact' ? 'btn-sm' : ''}}"
+                                onclick="return confirm('{{ __('Are you sure you want to delete this media?') }}')">
+                            {{__('Delete')}}
+                        </button>
                     </form>
-                    @endif
-                </div>
+                @endif
             </div>
         </div>
     </div>

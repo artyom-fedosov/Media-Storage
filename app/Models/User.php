@@ -4,10 +4,10 @@ namespace App\Models;
 
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use \Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Support\Facades\Auth;
 
 /**
  * @property string $login
@@ -65,8 +65,16 @@ class User extends Authenticatable
             'user_login', 'media_uuid')->withPivot('read', 'write');
     }
 
-    public function canAccess(Media $media): bool{
-        return $this->media()->where('media_uuid', $media->uuid)->exists();
+    public function canAccess(Media $media): bool
+    {
+        return $media->sharedUsers()
+            ->where('user_login', $this->login)
+            ->wherePivot('read', true)
+            ->exists();
     }
 
+    public function setting(): HasOne
+    {
+        return $this->hasOne(Setting::class, 'user_login', 'login');
+    }
 }

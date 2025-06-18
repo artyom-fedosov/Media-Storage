@@ -41,5 +41,8 @@
     "Media deleted successfully.": "Мультимедиа успешно удалено.",
     "Edit media": "Редактировать мультимедиа",
     "Settings updated successfully.": "Настройки успешно обновлены.",
-    "Convertion error" : "Ошибка конвертации"
+    "Conversion error" : "Ошибка конвертации",
+    "Filter by keywords": "Фильтр по ключевым словам",
+    "Share": "Поделиться",
+    "Enter user login to share with": "Введите логин пользователя, чтобы поделиться с ним"
 }

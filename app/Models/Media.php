@@ -51,4 +51,9 @@ class Media extends Model
             ->withPivot('read', 'write')
             ->withTimestamps();
     }
+
+    public function sharedWith()
+    {
+        return $this->belongsToMany(User::class, 'user_media', 'media_uuid', 'user_login');
+    }
 }

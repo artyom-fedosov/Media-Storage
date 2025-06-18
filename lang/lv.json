@@ -41,5 +41,8 @@
     "Media deleted successfully.": "Multivide ir veiksmigi nodzēsta.",
     "Edit media": "Rediģēt multividi",
     "Settings updated successfully.": "Iestatījumi sekmīgi atjaunināti.",
-    "Conversion error" : "Konvertācijas kļūda"
+    "Conversion error": "Konvertācijas kļūda",
+    "Filter by keywords": "Filtrēt pēc atslēgvārdiem",
+    "Share": "Kopīgot",
+    "Enter user login to share with": "Ievadiet lietotāja 'login', lai ar to koplietotu"
 }

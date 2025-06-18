@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 
+use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -24,54 +25,45 @@ class DatabaseSeeder extends Seeder
         Keyword::truncate();
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
-
+        User::create([
+            'login' => 'User',
+            'name' => 'User',
+            'language' => 'en',
+            'email' => 'user@example.com',
+            'password' => bcrypt('secret'),
+            'role' => 'simple'
+        ]);
         User::create([
             'login' => 'Artyom',
             'name' => 'Artyom',
-            'theme_style' => 'dark',
-            'density' => 'comfortable',
             'language' => 'en',
             'email' => 'artyom@example.com',
             'password' => bcrypt('secret'),
+            'role' => 'admin'
         ]);
-
         User::create([
             'login' => 'Yarik',
             'name' => 'Yarik',
-            'theme_style' => 'dark',
-            'density' => 'comfortable',
             'language' => 'en',
             'email' => 'yarik@example.com',
             'password' => bcrypt('secret'),
+            'role' => 'admin'
         ]);
 
-
-        $k1 = Keyword::create(['name' => 'AI']);
-        $k2 = Keyword::create(['name' => 'Laravel']);
-        $k3 = Keyword::create(['name' => 'PHP']);
-        $k4 = Keyword::create(['name' => 'Web']);
-        $k5 = Keyword::create(['name' => 'Database']);
-
-
-        $m1 = Media::create([
-            'uuid' => Str::uuid(),
-            'type' => 'image',
-            'owner' => 'Artyom',
-            'route' => 'uploads/PHP-logo-lossless.webp',
-            'name' => 'PHP in 2025',
-            'description' => 'This is PHP!',
+        Setting::create([
+            'theme_style' => 'light',
+            'density' => 'comfortable',
+            'user_login' => 'User'
         ]);
-        $m2 = Media::create([
-            'uuid' => Str::uuid(),
-            'type' => 'text',
-            'owner' => 'Yarik',
-            'route' => 'uploads/text.txt',
-            'name' => 'AI gone insane!',
-            'description' => 'Oh no!!!'
+        Setting::create([
+            'theme_style' => 'light',
+            'density' => 'comfortable',
+            'user_login' => 'Artyom'
         ]);
-
-        // Привязываем keywords к media (многие ко многим)
-        $m1->keywords()->attach([$k2->id, $k3->id, $k5->id]); // Laravel, PHP, Database
-        $m2->keywords()->attach([$k1->id, $k4->id]);           // AI, Web
+        Setting::create([
+            'theme_style' => 'dark',
+            'density' => 'compact',
+            'user_login' => 'Yarik'
+        ]);
     }
 }

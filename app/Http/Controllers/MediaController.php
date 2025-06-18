@@ -20,29 +20,46 @@ class MediaController extends Controller
     public function index(Request $request): View|Application|Factory
     {
         $user = auth()->user();
-        $ownedMedia = Media::query()->where('owner', $user->login);
-        $sharedMedia = $user->media();
 
-        if ($request->filled('keywords')) {
-            $keywordIds = $request->input('keywords');
-            $ownedMedia->whereHas('keywords', function ($query) use ($keywordIds) {
-                $query->whereIn('keywords.id', $keywordIds);
-            });
-            $sharedMedia->whereHas('keywords', function ($query) use ($keywordIds) {
-                $query->whereIn('keywords.id', $keywordIds);
-            });
+        if ($user->role === 'admin') {
+            $mediaQuery = Media::query();
+
+            if ($request->filled('keywords')) {
+                $keywordIds = $request->input('keywords');
+                $mediaQuery->whereHas('keywords', function ($q) use ($keywordIds) {
+                    $q->whereIn('keywords.id', $keywordIds);
+                });
+            }
+
+            $media = $mediaQuery->get();
+
+            $allKeywords = Keyword::orderBy('name')->get();
+
+        } else {
+            $ownedMedia = Media::where('owner', $user->login);
+            $sharedMedia = $user->media();
+
+            if ($request->filled('keywords')) {
+                $keywordIds = $request->input('keywords');
+                $ownedMedia->whereHas('keywords', function ($query) use ($keywordIds) {
+                    $query->whereIn('keywords.id', $keywordIds);
+                });
+                $sharedMedia->whereHas('keywords', function ($query) use ($keywordIds) {
+                    $query->whereIn('keywords.id', $keywordIds);
+                });
+            }
+
+            $media = $ownedMedia->get()->merge($sharedMedia->get())->unique('uuid');
+
+            $allKeywords = Keyword::whereHas('media', function ($query) use ($user) {
+                $query->where(function ($q) use ($user) {
+                    $q->where('owner', $user->login)
+                        ->orWhereHas('owners', function ($q2) use ($user) {
+                            $q2->where('users.login', $user->login);
+                        });
+                });
+            })->orderBy('name')->get();
         }
-
-        $media = $ownedMedia->get()->merge($sharedMedia->get())->unique('uuid');
-
-        $allKeywords = Keyword::whereHas('media', function ($query) use ($user) {
-            $query->where(function ($q) use ($user) {
-                $q->where('owner', $user->login)
-                    ->orWhereHas('owners', function ($q2) use ($user) {
-                        $q2->where('users.login', $user->login);
-                    });
-            });
-        })->orderBy('name')->get();
 
         $selectedKeywords = $request->input('keywords', []);
 
@@ -153,9 +170,11 @@ class MediaController extends Controller
 
     public function destroy(Media $medium): RedirectResponse
     {
-        if($medium->owner !== Auth::id()){
-            abort(403, __('Not authorized to view media'));
+        $user = Auth::user();
+        if ($medium->owner !== $user->login && $user->role !== 'admin') {
+            abort(403, __('Not authorized to delete this media'));
         }
+
         $path = $medium->route;
         if(!Storage::disk('private')->exists($path)){
             abort(404, __("Media not found"));
@@ -171,23 +190,35 @@ class MediaController extends Controller
             }
         }
 
+        $keywords = $medium->keywords()->pluck('id')->toArray();
+
         Storage::disk('private')->delete($path);
         $medium->delete();
+
+        foreach ($keywords as $keywordId) {
+            $count = Media::whereHas('keywords', function ($query) use ($keywordId) {
+                $query->where('keywords.id', $keywordId);
+            })->count();
+
+            if ($count === 0) {
+                Keyword::where('id', $keywordId)->delete();
+            }
+        }
+
         return redirect()->route('media.index')->with('success', __('Media deleted successfully.'));
     }
 
     public function preview(string $id): BinaryFileResponse
     {
-        $media = Media::query()->where('uuid', $id)->firstOrFail();
-        $user = User::find(Auth::id());
+        $media = Media::where('uuid', $id)->firstOrFail();
+        $user = auth()->user();
 
-        if($media->owner !== Auth::id() && !$user->canAccess($media) )
-        {
+        if ($media->owner !== $user->login && !$user->canAccess($media)) {
             abort(403, __("Not authorized to view media"));
         }
 
         $path = $media->route;
-        if(!Storage::disk('private')->exists($path)){
+        if (!Storage::disk('private')->exists($path)) {
             abort(404, __("Media not found"));
         }
 

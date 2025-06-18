@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Setting;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Foundation\Application;
@@ -14,8 +15,12 @@ class SettingsController extends Controller
 {
     public function index(): View|Application|Factory
     {
-        $theme = Auth::user()?->theme_style ?? 'light';
-        $density = Auth::user()?->density ?? 'comfortable';
+        $user = Auth::user();
+        $setting = $user->setting;
+
+        $theme = $setting?->theme_style ?? 'light';
+        $density = $setting?->density ?? 'comfortable';
+
         return view('settings', compact('theme', 'density'));
     }
 
@@ -23,13 +28,21 @@ class SettingsController extends Controller
     {
         $request->validate([
             'theme' => ['required', 'in:light,dark'],
-            'density' => ['required', 'in:comfortable,compact'],
+            'density' => ['required', 'in:comfortable,compact']
         ]);
 
         $user = Auth::user();
-        $user->theme_style = $request->input('theme');
-        $user->density = $request->input('density');
-        $user->save();
+
+        $setting = Setting::firstOrCreate(
+            ['user_login' => $user->login],
+            ['theme_style' => 'light'],
+            ['density' => 'comfortable']
+        );
+
+        $setting->update([
+            'theme_style' => $request->input('theme'),
+            'density' => $request->input('density'),
+        ]);
 
         return redirect()->back()->with('status', __('Settings updated successfully.'));
     }

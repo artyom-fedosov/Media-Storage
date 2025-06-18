@@ -41,5 +41,8 @@
     "Media deleted successfully.": "Media deleted successfully.",
     "Edit media": "Edit media",
     "Settings updated successfully.": "Settings updated successfully.",
-    "Conversion error" : "Conversion error"
+    "Conversion error": "Conversion error",
+    "Filter by keywords": "Filter by keywords",
+    "Share": "Share",
+    "Enter user login to share with": "Enter user login to share with"
 }
