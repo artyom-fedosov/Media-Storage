@@ -251,11 +251,11 @@ class MediaController extends Controller
         return response()->file(Storage::disk('private')->path($path));
     }
 
-    public function download(string $id): BinaryFileResponse
+    public function download(string $id, Request $request): BinaryFileResponse
     {
         $media = Media::query()->where('uuid', $id)->firstOrFail();
 
-        if($media->owner !== Auth::id()){
+        if($request->user()->cannot('view',$media)){
             abort(403, __("Not authorized to view media"));
         }
         $path = $media->route;
